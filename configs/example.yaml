@@ -1,0 +1,20 @@
+# Example config (optional). Not required by scripts, but useful for tracking.
+ner:
+  model_name: KB/bert-base-swedish-cased
+  dataset_name: bigbio/swedish_medical_ner
+  dataset_config: 1177
+  training:
+    epochs: 4
+    lr: 2e-5
+    weight_decay: 0.01
+    warmup_ratio: 0.1
+    per_device_train_batch_size: 16
+    per_device_eval_batch_size: 32
+    seed: 42
+el:
+  bm25:
+    icd_tsv: data/icd10se/icd10se.tsv
+    index_path: outputs/icd10se_bm25.index
+  embed:
+    model_name: sentence-transformers/paraphrase-multilingual-mpnet-base-v2
+    out_path: outputs/icd10se_embed.index
