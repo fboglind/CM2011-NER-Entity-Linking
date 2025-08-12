@@ -1,17 +1,17 @@
 # CM2011 Group Project — NER & Entity Linking (Swedish biomedical)
 
-This repo scaffolds a **working proof-of-concept** for:
+This repo serves as a **working proof-of-concept** for:
 1) **NER** on Swedish biomedical text (1177 subset) using Hugging Face Transformers
 2) **Entity linking (EL)** from recognized mentions to **ICD‑10‑SE** using a **lexical baseline** (BM25) + optional **multilingual embeddings** reranker.
 
 > Target: Get a clean, reproducible baseline in ~2 weeks (fits Paperspace/non-local GPU).
 
-## Quick start (Paperspace or any GPU VM)
+## Quick start
 
 ### 1) Clone & Python env
 ```bash
-git clone <your-repo-url> cm2011_lab3
-cd cm2011_lab3
+git clone https://github.com/fboglind/CM2011-NER-Entity-Linking.git
+cd CM2011-NER-Entity-Linking
 python3 -m venv .venv && source .venv/bin/activate
 python -m pip install --upgrade pip
 pip install -r requirements.txt
@@ -53,9 +53,9 @@ outputs/                 # (created at runtime) models, indices, logs
 ```
 
 ## Notes
-- **Dataset**: We target the **1177** subset for gold evaluation. Other subsets are auto-annotated and can be used with care.
+- **Dataset**: The **1177** subset is used for gold evaluation. Other subsets are auto-annotated and can be used with care.
 - **Repro**: Set seeds; enable `--report_to none` in the trainer if you don't use WandB.
-- **GPU**: Paperspace or university GPU recommended. CPU is fine for indexing and experimentation.
+- **GPU**: GPU is recommended. CPU is fine for indexing and experimentation.
 
 ## Next steps
 - Run the baseline as-is.
