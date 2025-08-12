@@ -1,7 +1,7 @@
 # NER training script using Hugging Face Transformers
 import argparse
 from dataclasses import dataclass
-from typing import List, Dict, Any
+from typing import Any
 
 import numpy as np
 from datasets import load_dataset, ClassLabel
@@ -26,7 +26,7 @@ def parse_args():
     p.add_argument("--seed", type=int, default=42)
     return p.parse_args()
 
-def get_label_list(features) -> List[str]:
+def get_label_list(features) -> list[str]:
     # Try to infer label names from the dataset features
     # Expecting a 'ner_tags' or 'labels' sequence of ClassLabel
     for candidate in ("ner_tags", "labels"):
