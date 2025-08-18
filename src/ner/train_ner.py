@@ -52,7 +52,7 @@ def main():
     args = parse_args()
 
     # 1) Load dataset
-    dataset = load_dataset(args.dataset_name, args.dataset_config)
+    dataset = load_dataset(args.dataset_name, args.dataset_config, trust_remote_code=True)
     # Expect train/validation/test splits
     # Some configs use 'validation' for dev; adapt if only 'train' is present.
     has_val = "validation" in dataset
