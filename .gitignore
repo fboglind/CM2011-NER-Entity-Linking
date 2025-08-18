@@ -6,3 +6,7 @@ data/icd10se/*.tsv
 # Temp files
 *~
 *.swp
+# OLD stuff
+*OLD.py
+*OLD.sh
+
