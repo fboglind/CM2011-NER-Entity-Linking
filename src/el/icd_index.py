@@ -3,7 +3,6 @@ import argparse
 import json
 import os
 import re
-from typing import List, Dict
 import pandas as pd
 from bs4 import BeautifulSoup
 from rank_bm25 import BM25Okapi

@@ -1,9 +1,8 @@
 # Simple EL CLI: query BM25 index and return Top-K ICD-10-SE codes
 import argparse
 import pickle
-from typing import List, Tuple
 
-def bm25_search(bm25, docs_tokens: List[List[str]], query: str, top_k: int = 10) -> List[Tuple[int, float]]:
+def bm25_search(bm25, docs_tokens: list[list[str]], query: str, top_k: int = 10) -> list[tuple[int, float]]:
     scores = bm25.get_scores(query.split())
     ranked = sorted(enumerate(scores), key=lambda x: x[1], reverse=True)[:top_k]
     return ranked

@@ -4,7 +4,7 @@ This repo serves as a **working proof-of-concept** for:
 1) **NER** on Swedish biomedical text (1177 subset) using Hugging Face Transformers
 2) **Entity linking (EL)** from recognized mentions to **ICD‑10‑SE** using a **lexical baseline** (BM25) + optional **multilingual embeddings** reranker.
 
-> Target: Get a clean, reproducible baseline in ~2 weeks (fits Paperspace/non-local GPU).
+> Target: Get a clean, reproducible baseline in ~2 weeks using non-local GPU.
 
 ## Quick start
 
@@ -19,7 +19,7 @@ pip install -r requirements.txt
 # (Select the CUDA version that matches your VM; CPU-only also works but is slow.)
 ```
 
-### 2) Train NER (KB-BERT on 1177 subset)
+### 2) Train NER (KB-BERT on 1177 subset data)
 ```bash
 python -m src.ner.train_ner   --model_name KB/bert-base-swedish-cased   --dataset_name bigbio/swedish_medical_ner   --dataset_config 1177   --output_dir outputs/ner_kbbert_1177   --num_train_epochs 4   --per_device_train_batch_size 16   --per_device_eval_batch_size 32   --learning_rate 2e-5   --weight_decay 0.01   --warmup_ratio 0.1   --gradient_accumulation_steps 1   --seed 42
 ```
