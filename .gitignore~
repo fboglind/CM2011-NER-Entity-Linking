@@ -3,5 +3,3 @@ __pycache__/
 outputs/
 *.ipynb_checkpoints
 data/icd10se/*.tsv
-*.md~
-.md.un~
