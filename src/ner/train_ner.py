@@ -194,7 +194,7 @@ def main():
         warmup_ratio=args.warmup_ratio,
         gradient_accumulation_steps=args.gradient_accumulation_steps,
         logging_steps=50,
-        evaluation_strategy="epoch" if "validation" in processed else "no",
+        # evaluation_strategy="epoch" if "validation" in processed else "no",
         save_strategy="epoch",
         load_best_model_at_end=False,
         seed=args.seed,

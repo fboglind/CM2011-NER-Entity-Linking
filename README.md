@@ -33,7 +33,8 @@ python -m src.ner.train_ner \
     --learning_rate 2e-5 \
     --weight_decay 0.01 \
     --warmup_ratio 0.1 \
-    --gradient_accumulation_steps 1   --seed 42
+    --gradient_accumulation_steps 1 \
+    --seed 42
 ```
 
 The script evaluates with **seqeval** on dev/test and saves the best checkpoint to `--output_dir`.
