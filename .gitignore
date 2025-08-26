@@ -2,11 +2,14 @@
 __pycache__/
 outputs/
 *.ipynb_checkpoints
+# data files and folders
 data/icd10se/*.tsv
+ner/data/
+el/data/
 # Temp files
 *~
 *.swp
 # OLD stuff
-*OLD.py
-*OLD.sh
+*OLD*.py
+*OLD*.sh
 

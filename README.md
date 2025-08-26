@@ -68,7 +68,6 @@ outputs/                 # (created at runtime) models, indices, logs
 ## Notes
 - **Dataset**: The **1177** subset is used for gold evaluation. Other subsets are auto-annotated and can be used with care.
 - **Repro**: Set seeds; enable `--report_to none` in the trainer if you don't use WandB.
-- **GPU**: GPU is recommended. CPU is fine for indexing and experimentation.
 
 ## Next steps
 - Run the baseline as-is.
