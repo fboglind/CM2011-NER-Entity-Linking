@@ -4,12 +4,15 @@ outputs/
 *.ipynb_checkpoints
 # data files and folders
 data/icd10se/*.tsv
-ner/data/
-el/data/
+src/ner/data/
+src/el/data/
+outputs/
 # Temp files
 *~
 *.swp
 # OLD stuff
 *OLD*.py
 *OLD*.sh
+*_OLD*
+
 
