@@ -155,9 +155,8 @@ def main():
     parser.add_argument("--model_name", type=str, default="KB/bert-base-swedish-cased")
     parser.add_argument("--output_dir", type=str, default="outputs/ner_kbbert_multi")
     # Data
-    parser.add_argument("--dataset_name", type=str, default="bigbio/swedish_medical_ner")
-    parser.add_argument("--dataset_configs", type=str, nargs="+",
-                        default=["lt", "wiki", "1177"]
+    parser.add_argument("--dataset_name", type=str, default="community-datasets/swedish_medical_ner")
+    parser.add_argument("--dataset_configs", type=str, nargs="+", default=["lt", "wiki", "1177"])
     parser.add_argument("--val_fraction", type=float, default=0.05)
     
     # Training schedule
