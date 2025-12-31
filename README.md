@@ -23,7 +23,7 @@ pip install -r requirements.txt
 ### 2) Train NER (KB-BERT on 1177 subset data)
 ```bash
 python -m src.ner.train_ner \
-    --model_name KB/bert-base-swedish-cased \
+    --model_name KB/bert-base-swedish-cased \ 
     --dataset_name bigbio/swedish_medical_ner \
     --dataset_config swedish_medical_ner_1177_source \
     --output_dir outputs/ner_kbbert_1177\

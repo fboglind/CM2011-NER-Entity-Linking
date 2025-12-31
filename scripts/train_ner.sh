@@ -3,8 +3,8 @@ set -euo pipefail
 
 python -m src.ner.train_ner \
     --model_name KB/bert-base-swedish-cased \
-    --dataset_name bigbio/swedish_medical_ner \
-    --dataset_config swedish_medical_ner_1177_source \
+    --dataset_name community-datasets/swedish_medical_ner \
+    --dataset_config 1177 \
     --output_dir outputs/ner_kbbert_1177 \
     --num_train_epochs 4 \
     --per_device_train_batch_size 16 \

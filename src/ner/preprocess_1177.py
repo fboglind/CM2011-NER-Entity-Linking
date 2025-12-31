@@ -5,8 +5,8 @@ from datasets import load_dataset, DatasetDict, Features, Sequence, ClassLabel, 
 # from nltk.tokenize import word_tokenize
 import re
 
-DATASET_NAME = "bigbio/swedish_medical_ner"
-CONFIG_NAME  = "swedish_medical_ner_1177_source"
+DATASET_NAME = "community-datasets/swedish_medical_ner"
+CONFIG_NAME  = "1177"
 OUT_DIR      = "swedish_medical_ner_1177_bio"  # local HF dataset folder
 
 def whitespace_tokens_with_spans(text):
@@ -53,7 +53,7 @@ def tag_sentence(tokens_spans, entities, label2id):
     return [label2id[l] for l in labels]
 
 def main():
-    ds = load_dataset(DATASET_NAME, CONFIG_NAME, trust_remote_code=True)
+    ds = load_dataset(DATASET_NAME, CONFIG_NAME)
 
     # Build the BIO label set from the whole training set (do train split only is fine)
     label_list = build_label_list(ds["train"])

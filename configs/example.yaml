@@ -1,8 +1,8 @@
 # Example config (optional). Not required by scripts, but useful for tracking.
 ner:
   model_name: KB/bert-base-swedish-cased
-  dataset_name: bigbio/swedish_medical_ner
-  dataset_config: swedish_medical_ner_1177_source
+  dataset_name: community-datasets/swedish_medical_ner
+  dataset_config: 1177
   training:
     epochs: 4
     lr: 2e-5

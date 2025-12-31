@@ -85,7 +85,7 @@ def load_datasets(dataset_name, configs, val_fraction=0.05, seed=42) -> dict[str
     out = {}
     for cfg in configs:
         logger.info(f"Loading {dataset_name} / {cfg}")
-        ds = load_dataset(dataset_name, cfg, trust_remote_code=True)
+        ds = load_dataset(dataset_name, cfg)
         # The BigBio config only have 'train'
         split = ds["train"].train_test_split(test_size=val_fraction, seed=seed)
         ds = DatasetDict(train=split["train"], validation=split["test"])
@@ -157,7 +157,7 @@ def main():
     # Data
     parser.add_argument("--dataset_name", type=str, default="bigbio/swedish_medical_ner")
     parser.add_argument("--dataset_configs", type=str, nargs="+",
-                        default=["swedish_medical_ner_lt_source", "swedish_medical_ner_wiki_source", "swedish_medical_ner_1177_source"])
+                        default=["lt", "wiki", "1177"]
     parser.add_argument("--val_fraction", type=float, default=0.05)
     
     # Training schedule
