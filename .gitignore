@@ -1,6 +1,7 @@
 .venv/
 __pycache__/
 outputs/
+backup/
 *.ipynb_checkpoints
 # data files and folders
 data/icd10se/*.tsv
