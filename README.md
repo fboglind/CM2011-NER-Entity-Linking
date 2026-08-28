@@ -1,10 +1,10 @@
 # CM2011 Swedish Biomedical Named Entity Recognition & Entity Linking
 
-A complete pipeline for extracting medical entities from Swedish clinical text and linking them to ICD-10-SE codes.
+A pipeline for extracting medical entities from Swedish clinical text and linking them to ICD-10-SE codes.
 
 ## Overview
 
-This project fine-tunes [KB-BERT](https://huggingface.co/KB/bert-base-swedish-cased) (a Swedish BERT model from the National Library of Sweden) for Named Entity Recognition on Swedish medical text, then links extracted entities to the Swedish ICD-10-SE classification system.
+This project fine-tunes [KB-BERT](https://huggingface.co/KB/bert-base-swedish-cased) for Named Entity Recognition on Swedish medical text, then links extracted entities to the Swedish ICD-10-SE classification system.
 
 ### Key Results
 
