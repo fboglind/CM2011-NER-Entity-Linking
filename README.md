@@ -6,7 +6,7 @@ A pipeline for extracting medical entities from Swedish clinical text and linkin
 
 This project fine-tunes [KB-BERT](https://huggingface.co/KB/bert-base-swedish-cased) for Named Entity Recognition on Swedish medical text, then links extracted entities to the Swedish ICD-10-SE classification system.
 
-### Key Results
+### Results
 
 | Task                    | Metric            | Score |
 | ----------------------- | ----------------- | ----- |
@@ -36,7 +36,7 @@ This project fine-tunes [KB-BERT](https://huggingface.co/KB/bert-base-swedish-ca
     └── icd10se/                           # ICD-10-SE classification
 ```
 
-## Key Findings
+## Findings
 
 ### 1. Data Quality Analysis
 
