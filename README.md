@@ -180,8 +180,3 @@ outputs/                 # (created at runtime) models, indices, logs
 ## License
 
 MIT
-
-## Author
-
-Fredrik Boglind
-Course: CM2011 - Applied Machine Learning and Artificial Intelligence
