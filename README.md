@@ -1,29 +1,109 @@
-# CM2011 Group Project — NER & Entity Linking (Swedish biomedical)
+# CM2011 Swedish Biomedical Named Entity Recognition & Entity Linking
 
-This repo serves as a **working proof-of-concept** for:
-1) **NER** on Swedish biomedical text (1177 subset) using Hugging Face Transformers
-2) **Entity linking (EL)** from recognized mentions to **ICD‑10‑SE** using a **lexical baseline** (BM25) + optional **multilingual embeddings** reranker.
+A complete pipeline for extracting medical entities from Swedish clinical text and linking them to ICD-10-SE codes.
 
-> Target: Get a clean, reproducible baseline in ~2 weeks using non-local GPU.
+## Overview
 
-## Quick start
+This project fine-tunes [KB-BERT](https://huggingface.co/KB/bert-base-swedish-cased) (a Swedish BERT model from the National Library of Sweden) for Named Entity Recognition on Swedish medical text, then links extracted entities to the Swedish ICD-10-SE classification system.
 
-### 1) Clone & Python env
-```bash
-git clone https://github.com/fboglind/CM2011-NER-Entity-Linking.git
-cd CM2011-NER-Entity-Linking
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-# Install PyTorch as per https://pytorch.org/get-started/locally/
-# (Select the CUDA version that matches your VM; CPU-only also works but is slow.)
+### Key Results
+
+| Task                    | Metric            | Score |
+| ----------------------- | ----------------- | ----- |
+| **NER** (1177 test set) | F1                | 0.95  |
+|                         | Precision         | 0.96  |
+|                         | Recall            | 0.94  |
+| **Entity Linking**      | Coverage          | 100%  |
+|                         | Median BM25 Score | 9.8   |
+
+### Entity Types
+
+| Type                 | Swedish          | Examples                         |
+| -------------------- | ---------------- | -------------------------------- |
+| Disorder and Finding | Sjukdom & Symtom | diabetes, smärta, stroke         |
+| Pharmaceutical Drug  | Läkemedel        | ibuprofen, kortison, paracetamol |
+| Body Structure       | Kroppsdel        | hjärnan, huden, knä              |
+
+## Project Structure
+
+```
+├── notebooks/
+│   └── cm2011_ner_entity_linking.ipynb   # Main notebook
+├── ner_utility_functions.py               # Helper functions
+├── models/
+│   └── ner_kbbert_1177/                   # Trained NER model
+└── data/
+    └── icd10se/                           # ICD-10-SE classification
 ```
 
-### 2) Train NER (KB-BERT on 1177 subset data)
-```bash
+## Key Findings
+
+### 1. Data Quality Analysis
+
+The Swedish Medical NER dataset contains three subsets with significantly different annotation quality:
+
+| Subset   | Size    | Annotation             | Quality                     |
+| -------- | ------- | ---------------------- | --------------------------- |
+| **1177** | 927     | Manual (gold standard) | ✓ Clean                     |
+| **lt**   | 745,753 | Distant supervision    | ✗ ~10,000 systematic errors |
+| **wiki** | 48,720  | Distant supervision    | ✗ ~1,000 systematic errors  |
+
+**Finding**: The distantly-supervised subsets (lt, wiki) contain systematic mislabelings — body structure terms like "hjärtat" (the heart) are incorrectly labeled as disorders thousands of times.
+
+### 2. Annotation Artifact: Bracket Markers
+
+The original dataset uses brackets to mark entity boundaries in the text itself:
+
+```
+( Demens ) innebär att man på olika sätt får svårt att minnas...
+```
+
+Training on this raw data causes the model to rely on brackets for recognition, failing on natural text. **Our preprocessing removes brackets and adjusts entity offsets**, enabling the model to recognize entities in real clinical text.
+
+### 3. Curriculum Learning: Negative Result
+
+We hypothesized that pre-training on larger noisy datasets would improve performance. Results showed the opposite:
+
+| Training Data                 | F1 on 1177 (Gold) |
+| ----------------------------- | ----------------- |
+| 1177 only                     | **0.95**          |
+| lt → wiki → 1177 (curriculum) | 0.70              |
+
+**Conclusion**: Data quality matters more than quantity. The incompatible annotation patterns in lt/wiki actively hurt performance.
+
+## Methods
+
+### NER Model
+
+- **Base Model**: KB-BERT (`KB/bert-base-swedish-cased`)
+- **Architecture**: BERT + Token Classification Head (7 labels: BIO scheme)
+- **Training**: 4 epochs, lr=2e-5, batch_size=16
+- **Data**: 1177 subset only (880 train / 47 validation)
+
+### Entity Linking
+
+- **Method**: BM25 lexical retrieval
+- **Index**: ICD-10-SE titles + descriptions (~39,000 codes)
+- **Scope**: Disorder/Finding entities → ICD-10-SE codes
+
+## Usage
+
+### NER Inference
+
+```python
+from transformers import pipeline
+
+ner = pipeline("ner", model="./models/ner_kbbert_1177", aggregation_strategy="simple")
+
+text = "Patienten har diagnosen diabetes och tar metformin dagligen."
+entities = ner(text)
+# [{'entity_group': 'disorder_finding', 'word': 'diabetes', 'score': 0.98},
+#  {'entity_group': 'pharmaceutical_drug', 'word': 'metformin', 'score': 0.97}]
+```
+
+```
 python -m src.ner.train_ner \
-    --model_name KB/bert-base-swedish-cased \ 
+    --model_name KB/bert-base-swedish-cased \
     --dataset_name bigbio/swedish_medical_ner \
     --dataset_config swedish_medical_ner_1177_source \
     --output_dir outputs/ner_kbbert_1177\
@@ -39,23 +119,40 @@ python -m src.ner.train_ner \
 
 The script evaluates with **seqeval** on dev/test and saves the best checkpoint to `--output_dir`.
 
-### 3) Prepare ICD‑10‑SE (Entity Linking)
-Place the official TSV (e.g., `icd10se.tsv`) under `data/icd10se/` (filename is configurable):
-```bash
-python -m src.el.icd_index   --icd_tsv data/icd10se/icd10se.tsv   --index_path outputs/icd10se_bm25.index
+### Entity Linking
+
+```python
+from ner_utility_functions import ICD10Linker
+
+linker = ICD10Linker("./data/icd10se/icd-10-se.tsv")
+results = linker.link("diabetes", top_k=3)
+# [{'code': 'E11', 'title': 'Diabetes mellitus typ 2', 'score': 15.2}, ...]
 ```
 
-### 4) Link mentions → ICD‑10‑SE
-```bash
+```
+python -m src.el.icd_index   --icd_tsv data/icd10se/icd10se.tsv   --index_path outputs/icd10se_bm25.index
+
 # Example: link a raw mention string
 python -m src.el.linker   --index_path outputs/icd10se_bm25.index   --query "Appendicit" --top_k 10
 ```
 
-Optional: Add multilingual embeddings reranker (see `src/el/embed_index.py`).
 
----
+
+## Requirements
+
+```
+transformers>=4.30.0
+datasets>=2.14.0
+seqeval>=1.2.2
+rank_bm25>=0.2.2
+torch>=2.0.0
+pandas>=2.0.0
+```
 
 ## Repo layout
+
+
+
 ```
 configs/                 # YAML configs (optional)
 data/icd10se/            # Place ICD‑10‑SE TSV here (not committed)
@@ -65,12 +162,26 @@ src/el/                  # Entity Linking (BM25 + embeddings rerank)
 outputs/                 # (created at runtime) models, indices, logs
 ```
 
-## Notes
-- **Dataset**: The **1177** subset is used for gold evaluation. Other subsets are auto-annotated and can be used with care.
-- **Repro**: Set seeds; enable `--report_to none` in the trainer if you don't use WandB.
+​                          
 
-## Next steps
-- Run the baseline as-is.
-- Add error analysis notebooks (qualitative examples).
-- Consider domain-adaptive pretraining (MLM) if time/compute allows.
-- (Stretch) Translate to English and compare BioBERT/SapBERT.
+## References
+
+- Almgren, S., & Pavlov, S. (2016). *Named Entity Recognition in Swedish Medical Journals*. Chalmers.
+- Rosvall, E., & Paasonen, A. (2023). *Data Augmentation for Swedish Clinical NER*. Chalmers.
+- Malmsten, M., et al. (2020). *Playing with Words at the National Library of Sweden*. arXiv:2007.01658.
+
+## Future Work
+
+1. **Embedding-based linking**: Replace BM25 with multilingual medical embeddings for semantic matching
+2. **Multi-ontology support**: Add ATC codes for drugs, SNOMED-CT for body structures
+3. **Context-aware linking**: Use sentence context to disambiguate entities
+4. **Negation detection**: Identify negated entities ("ingen smärta" = no pain)
+
+## License
+
+MIT
+
+## Author
+
+Fredrik Boglind
+Course: CM2011 - Applied Machine Learning and Artificial Intelligence
